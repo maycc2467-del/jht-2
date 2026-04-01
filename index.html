@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>集互通 - 商家后台管理系统</title>
-    <!-- Tailwind CSS -->
+    <title>集互通 - 商户后台控制台</title>
+    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
                     },
                     colors: {
                         brand: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            500: '#f97316', // 主色橙色
-                            600: '#ea580c',
-                        }
+                            50: '#fff6ed',
+                            100: '#ffead4',
+                            500: '#ff8c00', // 主品牌橙色
+                            600: '#e67e00',
+                        },
+                        up: '#ef4444',   // 红色上涨
+                        down: '#10b981', // 绿色下跌
                     },
                     boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.04)',
-                        'card': '0 2px 10px rgba(0, 0, 0, 0.02)',
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.04)',
+                        'card-hover': '0 8px 16px rgba(0, 0, 0, 0.08)',
                     }
                 }
             }
@@ -38,1042 +38,549 @@
     </script>
     <style>
         /* 自定义滚动条 */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        .nav-item.active { background-color: #fff7ed; color: #f97316; font-weight: 500; border-right: 3px solid #f97316; }
-        .sub-nav-item.active { color: #f97316; background-color: #f8fafc; }
-        .tab-item.active { background-color: #f97316; color: white; border-color: #f97316; }
-        
-        /* 隐藏无用视图 */
-        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 虚线框动画 */
-        .dash-border { background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23cbd5e1' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e"); border-radius: 8px; transition: all 0.3s;}
-        .dash-border:hover { background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23f97316' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e"); background-color: #fff7ed;}
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .bg-card-gradient {
+            background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+        }
+        .icon-gradient {
+            background: linear-gradient(135deg, #ff9f2a 0%, #ff7b00 100%);
+        }
     </style>
 </head>
-<body class="bg-[#F4F5F7] h-screen flex overflow-hidden text-gray-800 antialiased">
+<body class="bg-gray-50 text-gray-800 flex h-screen overflow-hidden antialiased">
 
-    <!-- 左侧边栏 -->
-    <aside class="w-[200px] bg-white border-r border-gray-100 flex flex-col z-20 shadow-card">
-        <!-- Logo -->
+    <!-- 左侧侧边栏 -->
+    <aside class="w-56 bg-white border-r border-gray-100 flex flex-col z-10 shadow-[2px_0_8px_rgba(0,0,0,0.02)] relative">
+        <!-- Logo 区域 -->
         <div class="h-16 flex items-center px-5 border-b border-gray-50">
-            <div class="w-8 h-8 bg-gradient-to-br from-orange-400 to-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                <i class="fa-solid fa-layer-group"></i>
+            <div class="flex items-center gap-2 cursor-pointer">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" fill="#FFF6ED" stroke="#FF8C00" stroke-width="2.5" stroke-linejoin="round"/>
+                    <path d="M16 2L16 16M16 16L28 9M16 16L4 9" stroke="#FF8C00" stroke-width="2.5" stroke-linejoin="round"/>
+                    <circle cx="16" cy="16" r="4" fill="#FF8C00"/>
+                </svg>
+                <span class="text-xl font-bold tracking-wider text-gray-900">集互通</span>
             </div>
-            <span class="ml-3 font-bold text-lg tracking-wide">集互通</span>
         </div>
 
-        <!-- 菜单列表 -->
-        <div class="flex-1 overflow-y-auto py-4">
-            <ul class="space-y-1">
-                <li>
-                    <a href="#" onclick="switchMenu('dashboard')" id="menu-dashboard" class="nav-item active flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-house w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">首页</span>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center px-5 py-3 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-box w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm flex-1">商品</span>
-                        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
-                    </div>
-                    <!-- 子菜单 -->
-                    <ul class="bg-white">
-                        <li><a href="#" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">我的商品</a></li>
-                        <li><a href="#" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">商品分组</a></li>
-                        <li><a href="#" onclick="switchMenu('product')" id="menu-product" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">商品发布</a></li>
-                        <li><a href="#" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">库存</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-store w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">店铺</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-wallet w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">交易</span>
-                    </a>
-                </li>
-                <li>
-                    <div class="flex items-center px-5 py-3 text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors" onclick="switchMenu('customer')" id="menu-customer-parent">
-                        <i class="fa-regular fa-user w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm flex-1">客户</span>
-                        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
-                    </div>
-                     <!-- 客户子菜单 -->
-                     <ul class="bg-white" id="submenu-customer" style="display:none;">
-                        <li><a href="#" onclick="switchMenu('customer')" id="menu-customer" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">客户概况</a></li>
-                        <li><a href="#" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">客户分层看板</a></li>
-                        <li><a href="#" class="sub-nav-item block pl-14 pr-5 py-2.5 text-sm text-gray-500 hover:text-brand-500 transition-colors">标签管理</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-bullhorn w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">营销</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-chart-simple w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">数据</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-headset w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">客服</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-coins w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">财务</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-item flex items-center px-5 py-3 text-gray-600 hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-gear w-6 text-center text-lg"></i>
-                        <span class="ml-2 text-sm">设置</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <!-- 导航菜单 -->
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-brand-50 text-brand-500 font-medium transition-colors">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                首页
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                商品
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="store" class="w-5 h-5"></i>
+                店铺
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="wallet" class="w-5 h-5"></i>
+                交易
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                客户
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="megaphone" class="w-5 h-5"></i>
+                营销
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                数据
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="headphones" class="w-5 h-5"></i>
+                客服
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="database" class="w-5 h-5"></i>
+                财务
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                设置
+            </a>
+        </nav>
     </aside>
 
     <!-- 右侧主体内容 -->
-    <div class="flex-1 flex flex-col h-screen overflow-hidden">
-        
+    <main class="flex-1 flex flex-col min-w-0">
         <!-- 顶部通栏 -->
-        <header class="h-16 bg-white flex items-center justify-between px-6 shadow-sm z-10 relative">
-            
-            <!-- 顶部多页签栏 (模拟浏览器标签) -->
-            <div class="absolute bottom-0 left-0 w-full px-6 flex items-end space-x-2 -mb-[1px]">
-                <div id="tab-dashboard" onclick="switchMenu('dashboard')" class="tab-item active cursor-pointer px-4 py-1.5 bg-brand-500 text-white text-sm rounded-t-lg border border-brand-500 flex items-center transition-all">
-                    <i class="fa-solid fa-house mr-2 text-xs"></i> 首页
-                </div>
-                <div id="tab-customer" onclick="switchMenu('customer')" class="tab-item cursor-pointer px-4 py-1.5 bg-white text-gray-500 text-sm rounded-t-lg border border-gray-200 border-b-0 hover:bg-gray-50 flex items-center transition-all">
-                    客户概况 <i class="fa-solid fa-xmark ml-3 text-gray-300 hover:text-red-500"></i>
-                </div>
-                <div id="tab-product" onclick="switchMenu('product')" class="tab-item cursor-pointer px-4 py-1.5 bg-white text-gray-500 text-sm rounded-t-lg border border-gray-200 border-b-0 hover:bg-gray-50 flex items-center transition-all">
-                    商品发布 <i class="fa-solid fa-xmark ml-3 text-gray-300 hover:text-red-500"></i>
+        <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 z-0 shadow-sm">
+            <!-- 当前页面标识 -->
+            <div class="flex items-center">
+                <div class="bg-brand-500 text-white px-4 py-1.5 rounded-md flex items-center gap-2 text-sm font-medium shadow-sm cursor-pointer hover:bg-brand-600 transition-colors">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    首页
                 </div>
             </div>
 
             <!-- 右侧工具栏 -->
-            <div class="flex-1"></div> <!-- 占位推右 -->
-            <div class="flex items-center space-x-6 pb-2">
+            <div class="flex items-center gap-6">
                 <!-- 搜索框 -->
                 <div class="relative group">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-brand-500 transition-colors"></i>
-                    <input type="text" placeholder="搜索" class="pl-9 pr-4 py-1.5 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all w-48">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-brand-500 transition-colors"></i>
+                    <input type="text" placeholder="搜索" class="pl-9 pr-4 py-1.5 bg-gray-50 border border-transparent rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-500 focus:bg-white transition-all w-64">
                 </div>
                 
-                <div class="flex items-center text-gray-500 space-x-4">
-                    <i class="fa-regular fa-calendar-days hover:text-brand-500 cursor-pointer text-lg transition-colors"></i>
-                    <i class="fa-regular fa-circle-question hover:text-brand-500 cursor-pointer text-lg transition-colors"></i>
-                    <div class="relative cursor-pointer hover:text-brand-500 transition-colors">
-                        <i class="fa-regular fa-bell text-lg"></i>
-                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                    </div>
+                <div class="flex items-center gap-4 text-gray-400">
+                    <button class="hover:text-brand-500 transition-colors tooltip-trigger" title="控制台列表"><i data-lucide="layout-list" class="w-5 h-5"></i></button>
+                    <button class="hover:text-brand-500 transition-colors tooltip-trigger" title="帮助中心"><i data-lucide="help-circle" class="w-5 h-5"></i></button>
+                    <button class="hover:text-brand-500 transition-colors relative tooltip-trigger" title="通知消息">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute 1 top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                    </button>
                 </div>
 
-                <div class="flex items-center cursor-pointer pl-4 border-l border-gray-200">
-                    <img src="https://ui-avatars.com/api/?name=弈&background=f97316&color=fff&rounded=true" alt="avatar" class="w-8 h-8 rounded-full shadow-sm">
-                    <span class="ml-2 text-sm font-medium">弈芙的小店</span>
-                    <i class="fa-solid fa-chevron-down ml-2 text-xs text-gray-400"></i>
+                <!-- 用户头像区域 -->
+                <div class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors border border-transparent hover:border-gray-100">
+                    <img src="https://ui-avatars.com/api/?name=User&background=f3f4f6&color=6b7280&rounded=true" alt="avatar" class="w-8 h-8 rounded-full border border-gray-200">
+                    <div class="flex items-center gap-1 text-sm font-medium text-gray-700">
+                        你的名字.小店
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                    </div>
                 </div>
             </div>
         </header>
 
         <!-- 内容滚动区 -->
-        <main class="flex-1 overflow-y-auto p-6 bg-[#F4F5F7]">
+        <div class="flex-1 overflow-y-auto p-6 bg-[#F8F9FA]">
             
-            <!-- ================= PAGE 1: 首页 Dashboard ================= -->
-            <div id="view-dashboard" class="view-section active max-w-7xl mx-auto space-y-5">
-                
-                <!-- 顶部数据卡片 -->
-                <div class="grid grid-cols-5 gap-4">
-                    <!-- Card 1 -->
-                    <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-soft transition-all duration-300 relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-500">今日订单总数</span>
-                            <i class="fa-regular fa-circle-question text-gray-300 text-xs cursor-help"></i>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800 mb-2 font-mono tracking-tight">1,056</div>
-                        <div class="text-xs text-gray-500 flex items-center">
-                            较昨日 <span class="text-emerald-500 ml-1 font-medium flex items-center"><i class="fa-solid fa-caret-down mr-1"></i>156</span>
-                        </div>
+            <!-- 顶部 5 个数据卡片 -->
+            <div class="grid grid-cols-5 gap-4 mb-6">
+                <!-- 卡片 1 -->
+                <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group cursor-pointer border border-gray-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-500 font-medium">今日订单总数</span>
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-gray-300 hover:text-brand-500 transition-colors cursor-help"></i>
                     </div>
-                    <!-- Card 2 -->
-                    <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-soft transition-all duration-300 relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-500">今日销售总额</span>
-                            <i class="fa-regular fa-circle-question text-gray-300 text-xs cursor-help"></i>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800 mb-2 font-mono tracking-tight">5,056</div>
-                        <div class="text-xs text-gray-500 flex items-center">
-                            较昨日 <span class="text-emerald-500 ml-1 font-medium flex items-center"><i class="fa-solid fa-caret-down mr-1"></i>2,012</span>
-                        </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2 font-mono tracking-tight group-hover:text-brand-500 transition-colors">1,056</div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        较昨日 
+                        <span class="flex items-center text-down font-medium ml-1">
+                            <i data-lucide="arrow-down" class="w-3 h-3 mr-0.5"></i> 156
+                        </span>
                     </div>
-                    <!-- Card 3 -->
-                    <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-soft transition-all duration-300 relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-500">店铺浏览量</span>
-                            <i class="fa-regular fa-circle-question text-gray-300 text-xs cursor-help"></i>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800 mb-2 font-mono tracking-tight">3,056</div>
-                        <div class="text-xs text-gray-500 flex items-center">
-                            较昨日 <span class="text-red-500 ml-1 font-medium flex items-center"><i class="fa-solid fa-caret-up mr-1"></i>1,156</span>
-                        </div>
-                    </div>
-                    <!-- Card 4 -->
-                    <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-soft transition-all duration-300 relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-500">今日新增用户</span>
-                            <i class="fa-regular fa-circle-question text-gray-300 text-xs cursor-help"></i>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800 mb-2 font-mono tracking-tight">1,054</div>
-                        <div class="text-xs text-gray-500 flex items-center">
-                            较昨日 <span class="text-red-500 ml-1 font-medium flex items-center"><i class="fa-solid fa-caret-up mr-1"></i>241</span>
-                        </div>
-                    </div>
-                    <!-- Card 5 -->
-                    <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-soft transition-all duration-300 relative overflow-hidden group">
-                        <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm text-gray-500">今日退款订单</span>
-                            <i class="fa-regular fa-circle-question text-gray-300 text-xs cursor-help"></i>
-                        </div>
-                        <div class="text-3xl font-bold text-gray-800 mb-2 font-mono tracking-tight">17</div>
-                        <div class="text-xs text-gray-500 flex items-center">
-                            较昨日 <span class="text-red-500 ml-1 font-medium flex items-center"><i class="fa-solid fa-caret-up mr-1"></i>2</span>
-                        </div>
+                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="shopping-bag" class="w-20 h-20"></i>
                     </div>
                 </div>
 
-                <!-- 主体内容区 (左右结构) -->
-                <div class="flex gap-5">
+                <!-- 卡片 2 -->
+                <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group cursor-pointer border border-gray-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-500 font-medium">今日销售总额</span>
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-gray-300 hover:text-brand-500 transition-colors cursor-help"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2 font-mono tracking-tight group-hover:text-brand-500 transition-colors">5,056</div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        较昨日 
+                        <span class="flex items-center text-down font-medium ml-1">
+                            <i data-lucide="arrow-down" class="w-3 h-3 mr-0.5"></i> 2,012
+                        </span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="coins" class="w-20 h-20"></i>
+                    </div>
+                </div>
+
+                <!-- 卡片 3 -->
+                <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group cursor-pointer border border-gray-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-500 font-medium">店铺浏览量</span>
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-gray-300 hover:text-brand-500 transition-colors cursor-help"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2 font-mono tracking-tight group-hover:text-brand-500 transition-colors">3,056</div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        较昨日 
+                        <span class="flex items-center text-up font-medium ml-1">
+                            <i data-lucide="arrow-up" class="w-3 h-3 mr-0.5"></i> 1,156
+                        </span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="eye" class="w-20 h-20"></i>
+                    </div>
+                </div>
+
+                <!-- 卡片 4 -->
+                <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group cursor-pointer border border-gray-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-500 font-medium">今日新增用户</span>
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-gray-300 hover:text-brand-500 transition-colors cursor-help"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2 font-mono tracking-tight group-hover:text-brand-500 transition-colors">1,054</div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        较昨日 
+                        <span class="flex items-center text-up font-medium ml-1">
+                            <i data-lucide="arrow-up" class="w-3 h-3 mr-0.5"></i> 241
+                        </span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="user-plus" class="w-20 h-20"></i>
+                    </div>
+                </div>
+
+                <!-- 卡片 5 -->
+                <div class="bg-white rounded-xl p-5 shadow-card hover:shadow-card-hover transition-shadow relative overflow-hidden group cursor-pointer border border-gray-50">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-500 font-medium">今日退款订单</span>
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-gray-300 hover:text-brand-500 transition-colors cursor-help"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2 font-mono tracking-tight group-hover:text-brand-500 transition-colors">17</div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        较昨日 
+                        <span class="flex items-center text-up font-medium ml-1">
+                            <i data-lucide="arrow-up" class="w-3 h-3 mr-0.5"></i> 2
+                        </span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <i data-lucide="refresh-ccw" class="w-20 h-20"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主内容区域 (左右布局) -->
+            <div class="flex gap-6">
+                
+                <!-- 左侧主要内容 -->
+                <div class="flex-1 flex flex-col gap-6">
                     
-                    <!-- 左侧大列 (70%) -->
-                    <div class="w-[72%] space-y-5">
-                        
-                        <!-- 待办事项 -->
-                        <div class="bg-white rounded-xl p-6 shadow-card bg-gradient-to-r from-orange-50/50 to-white border border-orange-100/50">
-                            <h3 class="text-base font-bold text-gray-800 mb-6 flex items-center">
-                                <span class="w-1 h-4 bg-brand-500 rounded-full mr-2"></span>待办事项
-                            </h3>
-                            <div class="grid grid-cols-6 gap-4 text-center">
-                                <div class="cursor-pointer hover:-translate-y-1 transition-transform group">
-                                    <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500">待发货订单</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono group-hover:text-brand-500">23</div>
+                    <!-- 待办事项 -->
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden border border-gray-50">
+                        <div class="bg-card-gradient px-6 py-5 border-b border-gray-50 flex items-center justify-between">
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-brand-500 rounded-full inline-block"></span>
+                                待办事项
+                            </h2>
+                            <button class="text-sm text-brand-500 hover:text-brand-600 font-medium">查看全部 ></button>
+                        </div>
+                        <div class="grid grid-cols-6 divide-x divide-gray-50 p-6">
+                            <div class="px-4 text-center cursor-pointer group">
+                                <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500 transition-colors">待发货订单</div>
+                                <div class="text-4xl font-bold text-gray-900 font-mono group-hover:scale-110 transition-transform origin-center">23</div>
+                            </div>
+                            <div class="px-4 text-center cursor-pointer group">
+                                <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500 transition-colors">待付款订单</div>
+                                <div class="text-4xl font-bold text-gray-900 font-mono group-hover:scale-110 transition-transform origin-center">3</div>
+                            </div>
+                            <div class="px-4 text-center cursor-pointer group">
+                                <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500 transition-colors">待评价订单</div>
+                                <div class="text-4xl font-bold text-gray-900 font-mono group-hover:scale-110 transition-transform origin-center">19</div>
+                            </div>
+                            <div class="px-4 text-center cursor-pointer group">
+                                <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500 transition-colors">待处理投诉</div>
+                                <div class="text-4xl font-bold text-up font-mono group-hover:scale-110 transition-transform origin-center relative inline-block">
+                                    1
+                                    <span class="absolute -top-1 -right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                                 </div>
-                                <div class="cursor-pointer hover:-translate-y-1 transition-transform group">
-                                    <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500">待付款订单</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono group-hover:text-brand-500">3</div>
+                            </div>
+                            <div class="px-4 text-center cursor-pointer group">
+                                <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500 transition-colors">用户反馈</div>
+                                <div class="text-4xl font-bold text-gray-900 font-mono group-hover:scale-110 transition-transform origin-center">40</div>
+                            </div>
+                            <div class="px-4 text-center cursor-pointer group">
+                                <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500 transition-colors">平台介入</div>
+                                <div class="text-4xl font-bold text-gray-300 font-mono group-hover:scale-110 transition-transform origin-center">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 便捷入口 -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-50 relative overflow-hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-brand-500 rounded-full inline-block"></span>
+                                便捷入口
+                            </h2>
+                            <button class="text-sm text-gray-400 hover:text-gray-700 font-medium flex items-center gap-1">
+                                自定义 <i data-lucide="settings-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-8 gap-4">
+                            <!-- 拟物化渐变图标 -->
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="package" class="w-7 h-7"></i>
                                 </div>
-                                <div class="cursor-pointer hover:-translate-y-1 transition-transform group">
-                                    <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500">待评价订单</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono group-hover:text-brand-500">19</div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">商品管理</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="file-text" class="w-7 h-7"></i>
                                 </div>
-                                <div class="cursor-pointer hover:-translate-y-1 transition-transform group relative">
-                                    <div class="absolute right-4 top-0 w-2 h-2 bg-red-500 rounded-full"></div>
-                                    <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500">待处理投诉</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono group-hover:text-brand-500">1</div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">订单查询</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="users" class="w-7 h-7"></i>
                                 </div>
-                                <div class="cursor-pointer hover:-translate-y-1 transition-transform group">
-                                    <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500">用户反馈</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono group-hover:text-brand-500">40</div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">客户查询</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="arrow-down-to-line" class="w-7 h-7"></i>
                                 </div>
-                                <div class="cursor-pointer hover:-translate-y-1 transition-transform group">
-                                    <div class="text-sm text-gray-500 mb-2 group-hover:text-brand-500">平台介入</div>
-                                    <div class="text-2xl font-bold text-gray-800 font-mono group-hover:text-brand-500">0</div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">采购入库单</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="plus-square" class="w-7 h-7"></i>
                                 </div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">发布商品</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="boxes" class="w-7 h-7"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">库存查询</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="truck" class="w-7 h-7"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">物流跟踪</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                                <div class="w-14 h-14 rounded-2xl icon-gradient shadow-md flex items-center justify-center text-white group-hover:-translate-y-1 group-hover:shadow-lg transition-all">
+                                    <i data-lucide="user-cog" class="w-7 h-7"></i>
+                                </div>
+                                <span class="text-sm text-gray-600 font-medium group-hover:text-brand-600">管理客户</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 实时数据图表 -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-50 relative overflow-hidden flex-1">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-brand-500 rounded-full inline-block"></span>
+                                实时数据
+                            </h2>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1 rounded text-sm font-medium bg-brand-50 text-brand-600">今日</button>
+                                <button class="px-3 py-1 rounded text-sm font-medium text-gray-500 hover:bg-gray-50">本周</button>
                             </div>
                         </div>
 
-                        <!-- 便捷入口 -->
-                        <div class="bg-white rounded-xl p-6 shadow-card">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-base font-bold text-gray-800 flex items-center">
-                                    <span class="w-1 h-4 bg-brand-500 rounded-full mr-2"></span>便捷入口
-                                </h3>
-                                <a href="#" class="text-sm text-gray-400 hover:text-brand-500">自定义 <i class="fa-solid fa-angle-right ml-1"></i></a>
-                            </div>
-                            <div class="grid grid-cols-8 gap-4">
-                                <!-- Icon Item -->
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-box-open"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">商品管理</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">订单查询</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-users-viewfinder"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">客户查询</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-truck-ramp-box"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">采购入库单</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-cart-plus"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">发布商品</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-warehouse"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">库存查询</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-truck-fast"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">物流跟踪</span>
-                                </div>
-                                <div class="flex flex-col items-center cursor-pointer group">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-50 flex items-center justify-center text-brand-500 text-xl mb-3 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all">
-                                        <i class="fa-solid fa-barcode"></i>
-                                    </div>
-                                    <span class="text-xs text-gray-600 group-hover:text-gray-900">扫描入库</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 实时数据图表 -->
-                        <div class="bg-white rounded-xl p-6 shadow-card">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-base font-bold text-gray-800 flex items-center">
-                                    <span class="w-1 h-4 bg-brand-500 rounded-full mr-2"></span>实时数据
-                                </h3>
-                                <a href="#" class="text-sm text-gray-400 hover:text-brand-500">自定义 <i class="fa-solid fa-angle-right ml-1"></i></a>
-                            </div>
-                            <div class="grid grid-cols-2 gap-8">
-                                <!-- Chart 1 -->
-                                <div>
+                        <div class="grid grid-cols-2 gap-8 h-48">
+                            <!-- 图表 1 -->
+                            <div class="flex flex-col relative group cursor-pointer">
+                                <div class="mb-2 z-10">
                                     <div class="text-sm text-gray-500 mb-1">交易金额(元)</div>
-                                    <div class="flex items-end mb-4">
-                                        <span class="text-2xl font-bold text-gray-800 font-mono">2,434.23</span>
-                                        <span class="text-xs text-red-500 ml-3 mb-1"><i class="fa-solid fa-caret-up"></i> 0.9%</span>
-                                    </div>
-                                    <div class="h-24 w-full relative">
-                                        <canvas id="chart1"></canvas>
+                                    <div class="text-3xl font-bold text-gray-900 font-mono">2,434.23</div>
+                                    <div class="flex items-center text-xs text-gray-500 mt-1">
+                                        较昨日 <span class="flex items-center text-up font-medium ml-1"><i data-lucide="arrow-up" class="w-3 h-3"></i> 0.9%</span>
                                     </div>
                                 </div>
-                                <!-- Chart 2 -->
-                                <div>
-                                    <div class="text-sm text-gray-500 mb-1">本月目标(元)</div>
-                                    <div class="flex items-end mb-4">
-                                        <span class="text-2xl font-bold text-gray-800 font-mono">13,549</span>
-                                        <span class="text-xs text-red-500 ml-3 mb-1"><i class="fa-solid fa-caret-up"></i> 0.23%</span>
+                                <!-- 伪图表 SVG -->
+                                <div class="absolute inset-0 top-12 left-0 right-0 bottom-0 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+                                    <svg viewBox="0 0 200 80" class="w-full h-full preserve-3d" preserveAspectRatio="none">
+                                        <defs>
+                                            <linearGradient id="gradient1" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#FF8C00" stop-opacity="0.25"/>
+                                                <stop offset="100%" stop-color="#FF8C00" stop-opacity="0"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M0,60 C20,60 30,30 50,40 C70,50 80,70 100,60 C120,50 140,20 160,30 C180,40 190,10 200,10 L200,80 L0,80 Z" fill="url(#gradient1)"/>
+                                        <path d="M0,60 C20,60 30,30 50,40 C70,50 80,70 100,60 C120,50 140,20 160,30 C180,40 190,10 200,10" fill="none" stroke="#FF8C00" stroke-width="2.5" stroke-linecap="round"/>
+                                        <circle cx="200" cy="10" r="3" fill="#fff" stroke="#FF8C00" stroke-width="2" class="animate-pulse"/>
+                                    </svg>
+                                    <div class="flex justify-between text-[10px] text-gray-400 mt-2 absolute w-full bottom-0">
+                                        <span>02/1</span><span>02/4</span><span>02/8</span>
                                     </div>
-                                    <div class="h-24 w-full relative">
-                                        <canvas id="chart2"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 图表 2 -->
+                            <div class="flex flex-col relative group cursor-pointer">
+                                <div class="mb-2 z-10">
+                                    <div class="text-sm text-gray-500 mb-1">本月目标</div>
+                                    <div class="text-3xl font-bold text-gray-900 font-mono">13,549</div>
+                                    <div class="flex items-center text-xs text-gray-500 mt-1">
+                                        较上月 <span class="flex items-center text-up font-medium ml-1"><i data-lucide="arrow-up" class="w-3 h-3"></i> 0.23%</span>
+                                    </div>
+                                </div>
+                                <!-- 伪图表 SVG -->
+                                <div class="absolute inset-0 top-12 left-0 right-0 bottom-0 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+                                    <svg viewBox="0 0 200 80" class="w-full h-full preserve-3d" preserveAspectRatio="none">
+                                        <defs>
+                                            <linearGradient id="gradient2" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#FDBA74" stop-opacity="0.25"/>
+                                                <stop offset="100%" stop-color="#FDBA74" stop-opacity="0"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M0,50 C20,50 30,20 50,30 C70,40 80,50 100,40 C120,30 140,40 160,30 C180,20 190,25 200,20 L200,80 L0,80 Z" fill="url(#gradient2)"/>
+                                        <path d="M0,50 C20,50 30,20 50,30 C70,40 80,50 100,40 C120,30 140,40 160,30 C180,20 190,25 200,20" fill="none" stroke="#FDBA74" stroke-width="2.5" stroke-linecap="round"/>
+                                        <circle cx="200" cy="20" r="3" fill="#fff" stroke="#FDBA74" stroke-width="2" class="animate-pulse"/>
+                                    </svg>
+                                    <div class="flex justify-between text-[10px] text-gray-400 mt-2 absolute w-full bottom-0">
+                                        <span>02/1</span><span>02/4</span><span>02/8</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 右侧小列 (28%) -->
-                    <div class="w-[28%] space-y-5">
-                        
-                        <!-- 店铺信息卡片 -->
-                        <div class="bg-white rounded-xl p-5 shadow-card relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-0 opacity-50"></div>
-                            <div class="flex justify-between items-start mb-4 relative z-10">
-                                <div class="flex items-center">
-                                    <img src="https://ui-avatars.com/api/?name=弈&background=f97316&color=fff&size=128" alt="Logo" class="w-12 h-12 rounded-full border-2 border-white shadow-sm">
-                                    <div class="ml-3">
-                                        <h4 class="font-bold text-gray-800">弈芙的小店</h4>
-                                        <div class="flex items-center mt-1">
-                                            <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center">
-                                                <i class="fa-solid fa-medal mr-1"></i>金牌店铺
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="text-xs border border-gray-200 text-gray-500 px-3 py-1.5 rounded-md hover:border-brand-500 hover:text-brand-500 transition-colors bg-white">
-                                    进入店铺
-                                </button>
-                            </div>
-                            
-                            <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-600 mb-5 relative z-10 bg-gray-50 py-2 rounded-lg">
-                                <div>描述 <span class="font-bold text-gray-800 ml-1">4.8</span> <i class="fa-solid fa-caret-up text-red-500 ml-0.5"></i></div>
-                                <div>服务 <span class="font-bold text-gray-800 ml-1">4.8</span> <i class="fa-solid fa-caret-up text-red-500 ml-0.5"></i></div>
-                                <div>物流 <span class="font-bold text-gray-800 ml-1">4.6</span> <i class="fa-solid fa-caret-up text-red-500 ml-0.5"></i></div>
-                            </div>
+                </div>
 
-                            <div class="space-y-3 text-sm relative z-10">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-500">店铺人气</span>
-                                    <div class="flex space-x-1">
-                                        <div class="w-6 h-3 bg-brand-200 rounded-sm"></div>
-                                        <div class="w-6 h-3 bg-brand-300 rounded-sm"></div>
-                                        <div class="w-6 h-3 bg-brand-500 rounded-sm"></div>
-                                    </div>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-500">店铺信用等级</span>
-                                    <div class="flex space-x-1">
-                                        <i class="fa-solid fa-heart text-red-500"></i>
-                                        <i class="fa-solid fa-heart text-red-500"></i>
-                                        <i class="fa-solid fa-heart text-red-500"></i>
-                                        <i class="fa-regular fa-heart text-gray-300"></i>
-                                    </div>
-                                </div>
-                                <div class="flex justify-between items-center pt-2 border-t border-gray-100">
-                                    <span class="text-gray-500">店铺保证金</span>
-                                    <span class="font-bold text-gray-800">15,400 <span class="text-xs font-normal text-gray-500">元</span></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 云雀头条 -->
-                        <div class="bg-white rounded-xl p-5 shadow-card">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-gray-800">云雀头条</h3>
-                                <i class="fa-solid fa-angle-right text-gray-400 text-sm cursor-pointer hover:text-brand-500"></i>
-                            </div>
-                            <ul class="space-y-3 text-sm">
-                                <li class="flex items-center justify-between cursor-pointer group">
-                                    <div class="flex items-center truncate pr-2">
-                                        <span class="text-xs bg-red-50 text-red-500 px-1.5 py-0.5 rounded mr-2 whitespace-nowrap">通知</span>
-                                        <span class="text-gray-600 group-hover:text-brand-500 truncate">2024年10月11号的更新日志及系统优化说明</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-center justify-between cursor-pointer group">
-                                    <div class="flex items-center truncate pr-2">
-                                        <span class="text-xs bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded mr-2 whitespace-nowrap">消息</span>
-                                        <span class="text-gray-600 group-hover:text-brand-500 truncate">双十一大促活动规则解读研讨会</span>
-                                    </div>
-                                </li>
-                                <li class="flex items-center justify-between cursor-pointer group">
-                                    <div class="flex items-center truncate pr-2">
-                                        <span class="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded mr-2 whitespace-nowrap">公告</span>
-                                        <span class="text-gray-600 group-hover:text-brand-500 truncate">关于防范电信网络诈骗的风险提示</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- 客服助手 -->
-                        <div class="bg-white rounded-xl p-5 shadow-card">
-                            <h3 class="font-bold text-gray-800 mb-4">客服助手</h3>
-                            <div class="flex items-center mb-4">
+                <!-- 右侧挂件栏 (宽度固定) -->
+                <div class="w-80 flex flex-col gap-6">
+                    
+                    <!-- 店铺信息卡片 -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-50">
+                        <div class="flex items-start justify-between mb-5">
+                            <div class="flex items-center gap-3">
                                 <div class="relative">
-                                    <!-- 模拟插画头像 -->
-                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 overflow-hidden">
-                                        <i class="fa-solid fa-user-astronaut text-2xl mt-2"></i>
-                                    </div>
-                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                                    <!-- 增加真实头像替代线框 -->
+                                    <img src="https://ui-avatars.com/api/?name=Shop&background=ff8c00&color=fff&rounded=true&size=128" alt="Store Avatar" class="w-14 h-14 rounded-full border-2 border-white shadow-sm">
+                                    <span class="absolute bottom-0 right-0 bg-yellow-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded border border-white">V3</span>
                                 </div>
-                                <div class="ml-3">
-                                    <div class="text-sm font-bold text-gray-800">您好，我是您的专属客服</div>
-                                    <div class="text-xs text-gray-500 mt-1">咨询答疑、功能讲解、操作问题等</div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900 text-lg">弈芙的小店</h3>
+                                    <div class="flex items-center gap-1 mt-1">
+                                        <i data-lucide="award" class="w-3.5 h-3.5 text-yellow-500"></i>
+                                        <span class="text-xs text-yellow-600 bg-yellow-50 px-1.5 py-0.5 rounded font-medium">金牌店铺</span>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="w-full py-2.5 bg-brand-50 hover:bg-brand-100 text-brand-600 rounded-lg text-sm font-medium transition-colors flex items-center justify-center">
-                                <i class="fa-solid fa-headset mr-2"></i> 联系客服
+                            <button class="text-sm px-3 py-1.5 border border-gray-200 rounded-lg hover:border-brand-500 hover:text-brand-500 transition-colors shadow-sm">
+                                进入店铺
                             </button>
                         </div>
 
+                        <!-- 动态评分 -->
+                        <div class="flex justify-between text-sm mb-5 pb-5 border-b border-gray-50">
+                            <div class="flex flex-col items-center gap-1 group">
+                                <span class="text-gray-500 text-xs">描述相符</span>
+                                <div class="flex items-center font-bold text-brand-500 font-mono">4.8 <i data-lucide="arrow-up" class="w-3 h-3 text-up ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 group">
+                                <span class="text-gray-500 text-xs">服务态度</span>
+                                <div class="flex items-center font-bold text-brand-500 font-mono">4.8 <i data-lucide="arrow-up" class="w-3 h-3 text-up ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 group">
+                                <span class="text-gray-500 text-xs">物流服务</span>
+                                <div class="flex items-center font-bold text-brand-500 font-mono">4.6 <i data-lucide="arrow-up" class="w-3 h-3 text-up ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 text-sm">
+                            <!-- 补充原图中灰色的店铺人气模块为真实的星星 -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">店铺人气</span>
+                                <div class="flex gap-1 text-brand-500">
+                                    <i data-lucide="star" class="w-4 h-4 fill-brand-500"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-brand-500"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-brand-500"></i>
+                                    <i data-lucide="star" class="w-4 h-4 fill-brand-500"></i>
+                                    <i data-lucide="star-half" class="w-4 h-4 fill-brand-500 text-brand-500"></i>
+                                </div>
+                            </div>
+                            <!-- 补充原图中灰色的店铺信用模块为真实的徽章 -->
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">店铺信用等级</span>
+                                <div class="flex gap-1 text-blue-500">
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                                    <i data-lucide="shield-check" class="w-4 h-4 opacity-30"></i>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">店铺保证金</span>
+                                <span class="font-bold text-gray-900 font-mono">15,400 <span class="text-xs font-normal text-gray-500">元</span></span>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- 云雀头条 (公告/消息) -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-50 relative">
+                        <div class="flex justify-between items-center mb-5">
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <span class="w-1 h-4 bg-brand-500 rounded-full inline-block"></span>
+                                云雀头条
+                            </h2>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-brand-500"></i>
+                        </div>
+                        <div class="space-y-4">
+                            <a href="#" class="flex items-center justify-between group">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <span class="text-[10px] text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded font-medium shrink-0">通知</span>
+                                    <span class="text-sm text-gray-600 truncate group-hover:text-brand-500 transition-colors">2024年10月11号的更新日志</span>
+                                </div>
+                                <span class="text-xs text-gray-400 ml-2 shrink-0">10-11</span>
+                            </a>
+                            <a href="#" class="flex items-center justify-between group">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <span class="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-medium shrink-0">消息</span>
+                                    <span class="text-sm text-gray-600 truncate group-hover:text-brand-500 transition-colors">关于系统维护升级的提前告知</span>
+                                </div>
+                                <span class="text-xs text-gray-400 ml-2 shrink-0">10-10</span>
+                            </a>
+                            <a href="#" class="flex items-center justify-between group">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <span class="text-[10px] text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded font-medium shrink-0">通知</span>
+                                    <span class="text-sm text-gray-600 truncate group-hover:text-brand-500 transition-colors">双十一大促活动商家报名规则</span>
+                                </div>
+                                <span class="text-xs text-gray-400 ml-2 shrink-0">10-09</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 客服助手 -->
+                    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-50">
+                        <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
+                            <span class="w-1 h-4 bg-brand-500 rounded-full inline-block"></span>
+                            客服助手
+                        </h2>
+                        <div class="flex gap-4 items-center mb-5">
+                            <div class="relative">
+                                <img src="https://ui-avatars.com/api/?name=CS&background=e0e7ff&color=4338ca&rounded=true" alt="CS Avatar" class="w-12 h-12 rounded-full border border-gray-100">
+                                <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-gray-900">您好，我是您的专属客服</div>
+                                <div class="text-xs text-gray-500 mt-1">咨询答疑、功能讲解、操作问题等</div>
+                            </div>
+                        </div>
+                        <button class="w-full py-2.5 bg-brand-50 text-brand-600 rounded-xl text-sm font-medium hover:bg-brand-100 transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="headphones" class="w-4 h-4"></i>
+                            联系客服
+                        </button>
+                    </div>
+
                 </div>
             </div>
-
-            <!-- ================= PAGE 2: 客户管理 Customer ================= -->
-            <div id="view-customer" class="view-section max-w-full bg-white rounded-xl shadow-card overflow-hidden h-full flex flex-col">
-                <!-- 内部 Tabs -->
-                <div class="flex border-b border-gray-100 px-6 pt-4 space-x-8">
-                    <div class="pb-3 text-brand-500 font-medium border-b-2 border-brand-500 cursor-pointer">全部客户</div>
-                    <div class="pb-3 text-gray-500 hover:text-gray-800 cursor-pointer transition-colors">普通客户</div>
-                    <div class="pb-3 text-gray-500 hover:text-gray-800 cursor-pointer transition-colors">优质客户</div>
-                    <div class="pb-3 text-gray-500 hover:text-gray-800 cursor-pointer transition-colors">潜在客户</div>
-                </div>
-
-                <!-- 筛选区 -->
-                <div class="p-6 pb-2 space-y-4">
-                    <div class="flex flex-wrap gap-4">
-                        <!-- Select Group 1 -->
-                        <div class="flex border border-gray-300 rounded-md overflow-hidden bg-white hover:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 transition-all w-64">
-                            <select class="bg-gray-50 border-r border-gray-300 text-sm text-gray-600 px-3 py-1.5 focus:outline-none w-28">
-                                <option>搜索关键词</option>
-                                <option>客户名称</option>
-                                <option>手机号</option>
-                            </select>
-                            <input type="text" placeholder="请输入..." class="px-3 py-1.5 text-sm flex-1 focus:outline-none">
-                        </div>
-                        
-                        <!-- Select 2 -->
-                        <div class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 bg-white w-48 hover:border-brand-500 transition-colors">
-                            <span class="text-sm text-gray-500 mr-2">客户状态</span>
-                            <select class="text-sm text-gray-800 flex-1 focus:outline-none bg-transparent">
-                                <option>全部</option>
-                                <option>活跃</option>
-                                <option>流失</option>
-                            </select>
-                        </div>
-
-                        <!-- Select 3 -->
-                        <div class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 bg-white w-48 hover:border-brand-500 transition-colors">
-                            <span class="text-sm text-gray-500 mr-2">最后跟进</span>
-                            <select class="text-sm text-gray-800 flex-1 focus:outline-none bg-transparent">
-                                <option>请选择时间段</option>
-                                <option>近7天</option>
-                            </select>
-                        </div>
-
-                        <!-- Select 4 -->
-                        <div class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 bg-white w-48 hover:border-brand-500 transition-colors">
-                            <span class="text-sm text-gray-500 mr-2">客户类型</span>
-                            <select class="text-sm text-gray-800 flex-1 focus:outline-none bg-transparent">
-                                <option>全部</option>
-                                <option>企业</option>
-                                <option>个人</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center space-x-3 pt-2">
-                         <div class="flex items-center border border-gray-300 rounded-md px-3 py-1.5 bg-white w-48 hover:border-brand-500 transition-colors mr-2">
-                            <span class="text-sm text-gray-500 mr-2">客户标签</span>
-                            <select class="text-sm text-gray-800 flex-1 focus:outline-none bg-transparent">
-                                <option>全部</option>
-                                <option>VIP</option>
-                            </select>
-                        </div>
-                        <button class="bg-brand-500 hover:bg-brand-600 text-white px-5 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm">查询</button>
-                        <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-1.5 rounded-md text-sm transition-colors">重置</button>
-                        <a href="#" class="text-sm text-brand-500 flex items-center ml-2 hover:text-brand-600"><i class="fa-solid fa-filter w-4 mr-1 text-center"></i>高级筛选</a>
-                    </div>
-                </div>
-
-                <!-- 操作栏 -->
-                <div class="px-6 py-3 flex justify-between items-center bg-gray-50/50 border-t border-b border-gray-100">
-                    <div class="space-x-2">
-                        <button class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm">添加</button>
-                        <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-1.5 rounded-md text-sm transition-colors">导出</button>
-                        <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-1.5 rounded-md text-sm transition-colors">批量编辑</button>
-                        <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-1.5 rounded-md text-sm transition-colors">转移客户</button>
-                        <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-1.5 rounded-md text-sm transition-colors">合并客户</button>
-                        <button class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-1.5 rounded-md text-sm transition-colors">导入</button>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="text-sm text-gray-500 flex items-center">跟进模式 <i class="fa-regular fa-circle-question ml-1 cursor-help"></i></span>
-                        <div class="flex bg-gray-100 rounded-md p-0.5 border border-gray-200">
-                            <button class="px-3 py-1 bg-white shadow-sm rounded text-sm text-gray-800 font-medium">排序</button>
-                            <button class="px-3 py-1 text-sm text-gray-500 hover:text-gray-800">列表</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 表格 -->
-                <div class="flex-1 overflow-auto px-6 pb-6">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-orange-50/50 text-gray-600 text-sm border-b border-orange-100">
-                                <th class="py-3 px-4 font-medium w-12"><input type="checkbox" class="rounded text-brand-500 focus:ring-brand-500"></th>
-                                <th class="py-3 px-4 font-medium w-16">序号</th>
-                                <th class="py-3 px-4 font-medium">客户名称</th>
-                                <th class="py-3 px-4 font-medium">客户编码</th>
-                                <th class="py-3 px-4 font-medium">人群定义</th>
-                                <th class="py-3 px-4 font-medium">创建时间 <i class="fa-solid fa-arrow-down-up-active text-brand-500 text-xs ml-1 cursor-pointer"></i></th>
-                                <th class="py-3 px-4 font-medium">跟进状态</th>
-                                <th class="py-3 px-4 font-medium text-right">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm text-gray-700">
-                            <!-- Row 1 -->
-                            <tr class="border-b border-gray-50 hover:bg-orange-50/30 transition-colors">
-                                <td class="py-3 px-4"><input type="checkbox" class="rounded text-brand-500 focus:ring-brand-500"></td>
-                                <td class="py-3 px-4 text-gray-400">1</td>
-                                <td class="py-3 px-4 font-medium text-gray-800">赵玉风</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">17724869</td>
-                                <td class="py-3 px-4">待跟进意向大客户</td>
-                                <td class="py-3 px-4 text-gray-500">2020-10-18</td>
-                                <td class="py-3 px-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-700 border border-orange-200">
-                                        <span class="w-1.5 h-1.5 bg-orange-500 rounded-full mr-1.5"></span> 进行中
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 text-right space-x-2 text-gray-400">
-                                    <a href="#" class="hover:text-brand-500">跟进</a>
-                                    <a href="#" class="hover:text-brand-500">编辑</a>
-                                    <a href="#" class="hover:text-brand-500">置顶</a>
-                                    <a href="#" class="hover:text-red-500">删除</a>
-                                </td>
-                            </tr>
-                            <!-- Row 2 -->
-                            <tr class="border-b border-gray-50 hover:bg-orange-50/30 transition-colors">
-                                <td class="py-3 px-4"><input type="checkbox" class="rounded text-brand-500 focus:ring-brand-500"></td>
-                                <td class="py-3 px-4 text-gray-400">2</td>
-                                <td class="py-3 px-4 font-medium text-gray-800">李书萍</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">3654880</td>
-                                <td class="py-3 px-4">高频下单超优质客户</td>
-                                <td class="py-3 px-4 text-gray-500">2020-10-02</td>
-                                <td class="py-3 px-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span> 已完成
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 text-right space-x-2 text-gray-400">
-                                    <a href="#" class="hover:text-brand-500">跟进</a>
-                                    <a href="#" class="hover:text-brand-500">编辑</a>
-                                    <a href="#" class="hover:text-brand-500">置顶</a>
-                                    <a href="#" class="hover:text-red-500">删除</a>
-                                </td>
-                            </tr>
-                            <!-- Row 3 -->
-                            <tr class="border-b border-gray-50 hover:bg-orange-50/30 transition-colors">
-                                <td class="py-3 px-4"><input type="checkbox" class="rounded text-brand-500 focus:ring-brand-500"></td>
-                                <td class="py-3 px-4 text-gray-400">3</td>
-                                <td class="py-3 px-4 font-medium text-gray-800">吴萱萱</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">84519756</td>
-                                <td class="py-3 px-4">经常售后咨询比较纠结</td>
-                                <td class="py-3 px-4 text-gray-500">2020-10-02</td>
-                                <td class="py-3 px-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span> 失败
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 text-right space-x-2 text-gray-400">
-                                    <a href="#" class="hover:text-brand-500">跟进</a>
-                                    <a href="#" class="hover:text-brand-500">编辑</a>
-                                    <a href="#" class="hover:text-brand-500">置顶</a>
-                                    <a href="#" class="hover:text-red-500">删除</a>
-                                </td>
-                            </tr>
-                            <!-- Row 4 -->
-                            <tr class="border-b border-gray-50 hover:bg-orange-50/30 transition-colors">
-                                <td class="py-3 px-4"><input type="checkbox" class="rounded text-brand-500 focus:ring-brand-500"></td>
-                                <td class="py-3 px-4 text-gray-400">4</td>
-                                <td class="py-3 px-4 font-medium text-gray-800">周静</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">11023544</td>
-                                <td class="py-3 px-4">爱比价观望新客户</td>
-                                <td class="py-3 px-4 text-gray-500">2020-09-29</td>
-                                <td class="py-3 px-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700 border border-red-200">
-                                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></span> 逾期
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 text-right space-x-2 text-gray-400">
-                                    <a href="#" class="hover:text-brand-500">跟进</a>
-                                    <a href="#" class="hover:text-brand-500">编辑</a>
-                                    <a href="#" class="hover:text-brand-500">置顶</a>
-                                    <a href="#" class="hover:text-red-500">删除</a>
-                                </td>
-                            </tr>
-                            <!-- Row 5 (Checked) -->
-                            <tr class="border-b border-gray-50 bg-orange-50/50 transition-colors">
-                                <td class="py-3 px-4"><input type="checkbox" checked class="rounded text-brand-500 focus:ring-brand-500"></td>
-                                <td class="py-3 px-4 text-gray-400">5</td>
-                                <td class="py-3 px-4 font-medium text-brand-600">赵春光</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">78599214</td>
-                                <td class="py-3 px-4">忠实老粉超捧场</td>
-                                <td class="py-3 px-4 text-gray-500">2020-09-28</td>
-                                <td class="py-3 px-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span> 已完成
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 text-right space-x-2 text-gray-400">
-                                    <a href="#" class="text-brand-500">跟进</a>
-                                    <a href="#" class="text-brand-500">编辑</a>
-                                    <a href="#" class="text-brand-500">置顶</a>
-                                    <a href="#" class="hover:text-red-500">删除</a>
-                                </td>
-                            </tr>
-                             <!-- Row 6 -->
-                             <tr class="border-b border-gray-50 hover:bg-orange-50/30 transition-colors">
-                                <td class="py-3 px-4"><input type="checkbox" class="rounded text-brand-500 focus:ring-brand-500"></td>
-                                <td class="py-3 px-4 text-gray-400">6</td>
-                                <td class="py-3 px-4 font-medium text-gray-800">郑盈</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">02124836</td>
-                                <td class="py-3 px-4">新客户待深挖</td>
-                                <td class="py-3 px-4 text-gray-500">2020-09-25</td>
-                                <td class="py-3 px-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span> 已完成
-                                    </span>
-                                </td>
-                                <td class="py-3 px-4 text-right space-x-2 text-gray-400">
-                                    <a href="#" class="hover:text-brand-500">跟进</a>
-                                    <a href="#" class="hover:text-brand-500">编辑</a>
-                                    <a href="#" class="hover:text-brand-500">置顶</a>
-                                    <a href="#" class="hover:text-red-500">删除</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- 分页 -->
-                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white mt-auto">
-                    <div class="flex items-center space-x-4">
-                        <label class="flex items-center text-sm text-gray-600 cursor-pointer"><input type="checkbox" class="mr-2 rounded text-brand-500 focus:ring-brand-500"> 全选</label>
-                        <button class="text-sm border border-gray-300 rounded px-3 py-1 hover:bg-gray-50 text-gray-600">更多操作 <i class="fa-solid fa-angle-down ml-1"></i></button>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-600 space-x-2">
-                        <span>共40条</span>
-                        <button class="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-400 disabled:opacity-50"><i class="fa-solid fa-angle-left"></i></button>
-                        <button class="w-8 h-8 rounded border border-brand-500 bg-brand-50 text-brand-600 font-medium flex items-center justify-center">1</button>
-                        <button class="w-8 h-8 rounded border border-gray-300 hover:bg-gray-50 flex items-center justify-center">2</button>
-                        <button class="w-8 h-8 rounded border border-gray-300 hover:bg-gray-50 flex items-center justify-center">3</button>
-                        <button class="w-8 h-8 rounded border border-gray-300 hover:bg-gray-50 flex items-center justify-center">4</button>
-                        <button class="w-8 h-8 rounded border border-gray-300 hover:bg-gray-50 flex items-center justify-center">5</button>
-                        <button class="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-50 text-gray-600"><i class="fa-solid fa-angle-right"></i></button>
-                        
-                        <div class="flex items-center ml-4 border border-gray-300 rounded px-2 py-1">
-                            8条/页 <i class="fa-solid fa-angle-down ml-2 text-gray-400"></i>
-                        </div>
-                        <span class="ml-2">跳至</span>
-                        <input type="text" value="1" class="w-10 h-8 border border-gray-300 rounded text-center focus:outline-none focus:border-brand-500">
-                        <span>页</span>
-                    </div>
-                </div>
+            
+            <!-- 底部版权 (可选补充) -->
+            <div class="mt-8 text-center text-xs text-gray-400">
+                &copy; 2024 集互通. All rights reserved. 
             </div>
+            
+        </div>
+    </main>
 
-            <!-- ================= PAGE 3: 商品发布 Product ================= -->
-            <div id="view-product" class="view-section max-w-5xl mx-auto bg-white rounded-xl shadow-card overflow-hidden">
-                
-                <!-- 步骤条 -->
-                <div class="py-10 px-20 border-b border-gray-100 bg-gray-50/30">
-                    <div class="flex items-center justify-between relative">
-                        <!-- 连接线 -->
-                        <div class="absolute top-1/2 left-[10%] right-[10%] h-[2px] bg-gray-200 -z-10 transform -translate-y-1/2"></div>
-                        
-                        <!-- Step 1 -->
-                        <div class="flex flex-col items-center bg-white px-4">
-                            <div class="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-lg mb-3 shadow-md border-4 border-white ring-2 ring-brand-100">1</div>
-                            <div class="text-base font-bold text-gray-800">选择商品分类</div>
-                            <div class="text-xs text-gray-400 mt-1">请选择您所发布商品的所属类</div>
-                        </div>
-                        <!-- Step 2 -->
-                        <div class="flex flex-col items-center bg-white px-4 opacity-60">
-                            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-lg mb-3 border-4 border-white">2</div>
-                            <div class="text-base font-bold text-gray-600">商品基本信息</div>
-                            <div class="text-xs text-gray-400 mt-1">编辑您发布商品的基本信息</div>
-                        </div>
-                        <!-- Step 3 -->
-                        <div class="flex flex-col items-center bg-white px-4 opacity-60">
-                            <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold text-lg mb-3 border-4 border-white">3</div>
-                            <div class="text-base font-bold text-gray-600">发布成功</div>
-                            <div class="text-xs text-gray-400 mt-1">在商品管理中设置上架/下架</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 表单区 -->
-                <div class="p-10 pl-16">
-                    <form class="space-y-6">
-                        
-                        <!-- 商品类型 -->
-                        <div class="flex items-center">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700"><span class="text-red-500 mr-1">*</span>商品类型：</div>
-                            <div class="relative w-80">
-                                <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 appearance-none bg-white">
-                                    <option>请选择商品类型</option>
-                                    <option>实物商品</option>
-                                    <option>虚拟商品</option>
-                                </select>
-                                <i class="fa-solid fa-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                            </div>
-                        </div>
-
-                        <!-- 商品标题 -->
-                        <div class="flex items-center">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700"><span class="text-red-500 mr-1">*</span>商品标题：</div>
-                            <div class="relative w-80">
-                                <input type="text" placeholder="请输入商品标题" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
-                                <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">0/60</span>
-                            </div>
-                        </div>
-
-                        <!-- 商品主图 -->
-                        <div class="flex items-start">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700 pt-2"><span class="text-red-500 mr-1">*</span>商品主图：</div>
-                            <div class="flex-1">
-                                <div class="text-xs text-gray-400 mb-3">可拖拽图片调整顺序，最多上传 15 张图片，最大支持上传30M文件</div>
-                                <div class="flex flex-wrap gap-4">
-                                    <!-- 已上传主图示例 -->
-                                    <div class="w-24 h-24 rounded-lg border border-gray-200 overflow-hidden relative group cursor-pointer shadow-sm">
-                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover" alt="Product">
-                                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <i class="fa-regular fa-trash-can text-white"></i>
-                                        </div>
-                                        <div class="absolute bottom-0 left-0 right-0 bg-brand-500 text-white text-[10px] text-center py-0.5">主图</div>
-                                    </div>
-                                    <!-- 上传框 -->
-                                    <div class="w-24 h-24 dash-border flex flex-col items-center justify-center text-gray-400 cursor-pointer group">
-                                        <i class="fa-solid fa-plus text-xl mb-1 group-hover:text-brand-500 transition-colors"></i>
-                                        <span class="text-xs group-hover:text-brand-500 transition-colors">上传图片</span>
-                                    </div>
-                                    <div class="w-24 h-24 dash-border flex flex-col items-center justify-center text-gray-400 cursor-pointer group">
-                                        <i class="fa-solid fa-plus text-xl mb-1 group-hover:text-brand-500"></i>
-                                        <span class="text-xs">上传图片</span>
-                                    </div>
-                                    <div class="w-24 h-24 dash-border flex flex-col items-center justify-center text-gray-400 cursor-pointer group">
-                                        <i class="fa-solid fa-plus text-xl mb-1 group-hover:text-brand-500"></i>
-                                        <span class="text-xs">上传图片</span>
-                                    </div>
-                                    <div class="w-24 h-24 dash-border flex flex-col items-center justify-center text-gray-400 cursor-pointer group">
-                                        <i class="fa-solid fa-plus text-xl mb-1 group-hover:text-brand-500"></i>
-                                        <span class="text-xs">上传图片</span>
-                                    </div>
-                                </div>
-                                
-                                <!-- 条形码 -->
-                                <div class="flex mt-4">
-                                    <div class="relative w-40">
-                                        <select class="w-full border border-gray-300 rounded-l-md px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 appearance-none bg-gray-50">
-                                            <option>上传或选择条形码</option>
-                                        </select>
-                                        <i class="fa-solid fa-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                                    </div>
-                                    <input type="text" placeholder="输入条形码内容" class="w-64 border border-gray-300 border-l-0 rounded-r-md px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
-                                </div>
-                                <div class="text-xs text-gray-400 mt-1">若商品含条形码，可选择上传商品条形码</div>
-                            </div>
-                        </div>
-
-                        <!-- 商品详情 (富文本模拟) -->
-                        <div class="flex items-start">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700 pt-2"><span class="text-red-500 mr-1">*</span>商品详情：</div>
-                            <div class="flex-1 border border-gray-300 rounded-md overflow-hidden focus-within:ring-1 focus-within:ring-brand-500 focus-within:border-brand-500 transition-all">
-                                <!-- 工具栏 -->
-                                <div class="bg-gray-50 border-b border-gray-200 px-3 py-2 flex items-center space-x-3 text-gray-500 text-sm">
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-solid fa-bold"></i></button>
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-solid fa-italic"></i></button>
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-solid fa-underline"></i></button>
-                                    <div class="w-px h-4 bg-gray-300"></div>
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-solid fa-list-ul"></i></button>
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-solid fa-list-ol"></i></button>
-                                    <div class="w-px h-4 bg-gray-300"></div>
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-regular fa-image"></i></button>
-                                    <button type="button" class="hover:text-gray-800"><i class="fa-solid fa-link"></i></button>
-                                </div>
-                                <textarea placeholder="请输入商品描述内容..." class="w-full h-32 px-4 py-3 text-sm text-gray-800 focus:outline-none resize-none"></textarea>
-                            </div>
-                        </div>
-
-                        <!-- 导购标题 -->
-                        <div class="flex items-center">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700"><span class="text-red-500 mr-1">*</span>导购标题：</div>
-                            <div class="flex-1 flex items-center bg-gray-50 border border-gray-200 rounded-md p-1.5 relative">
-                                <span class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1 rounded shadow-sm mr-2 cursor-pointer hover:border-brand-500">品牌</span>
-                                <span class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1 rounded shadow-sm mr-2 cursor-pointer hover:border-brand-500">流行元素</span>
-                                <span class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1 rounded shadow-sm mr-2 cursor-pointer hover:border-brand-500">品类词</span>
-                                <span class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1 rounded shadow-sm mr-2 cursor-pointer hover:border-brand-500">风格</span>
-                                <span class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1 rounded shadow-sm mr-2 cursor-pointer hover:border-brand-500">目标对象</span>
-                                <span class="bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1 rounded shadow-sm mr-2 cursor-pointer hover:border-brand-500">亮点</span>
-                                <button type="button" class="bg-white border border-dashed border-gray-300 text-gray-400 text-xs px-2 py-1 rounded hover:text-brand-500 hover:border-brand-500"><i class="fa-solid fa-plus"></i></button>
-                                <span class="absolute right-3 text-xs text-gray-400">0/20</span>
-                            </div>
-                        </div>
-
-                        <!-- 商品规格 -->
-                        <div class="flex items-center">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700"><span class="text-red-500 mr-1">*</span>商品规格：</div>
-                            <div class="flex space-x-4 w-96">
-                                <div class="relative flex-1">
-                                    <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 appearance-none bg-white">
-                                        <option>规格值</option>
-                                        <option>颜色</option>
-                                        <option>尺寸</option>
-                                    </select>
-                                    <i class="fa-solid fa-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                                </div>
-                                <div class="relative flex-1">
-                                    <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 appearance-none bg-white">
-                                        <option>规格名</option>
-                                    </select>
-                                    <i class="fa-solid fa-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                         <!-- 商品品牌 -->
-                         <div class="flex items-center">
-                            <div class="w-24 text-right pr-4 text-sm font-medium text-gray-700"><span class="text-red-500 mr-1">*</span>商品品牌：</div>
-                            <div class="w-80">
-                                <input type="text" placeholder="请输入商品品牌" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                
-                <!-- 底部按钮 -->
-                <div class="px-10 py-5 bg-gray-50 border-t border-gray-100 flex justify-end space-x-4 mt-8">
-                    <button class="px-8 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-md text-sm font-medium transition-colors shadow-sm">下一步</button>
-                    <button class="px-8 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md text-sm font-medium transition-colors">保存草稿</button>
-                </div>
-
-            </div>
-
-        </main>
-    </div>
-
-    <!-- 交互脚本 -->
+    <!-- 初始化图标 -->
     <script>
-        // 页面切换逻辑
-        function switchMenu(viewId) {
-            // 1. 处理顶部 Tabs 高亮
-            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active', 'bg-brand-500', 'text-white', 'border-brand-500'));
-            document.querySelectorAll('.tab-item').forEach(el => el.classList.add('bg-white', 'text-gray-500'));
-            
-            const activeTab = document.getElementById('tab-' + viewId);
-            if(activeTab) {
-                activeTab.classList.remove('bg-white', 'text-gray-500');
-                activeTab.classList.add('active', 'bg-brand-500', 'text-white', 'border-brand-500');
-            }
-
-            // 2. 处理侧边栏菜单高亮
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sub-nav-item').forEach(el => el.classList.remove('active'));
-            
-            if(viewId === 'dashboard') {
-                document.getElementById('menu-dashboard').classList.add('active');
-            } else if(viewId === 'customer') {
-                document.getElementById('menu-customer-parent').classList.add('bg-gray-50');
-                document.getElementById('submenu-customer').style.display = 'block';
-                document.getElementById('menu-customer').classList.add('active');
-            } else if(viewId === 'product') {
-                document.getElementById('menu-product').classList.add('active');
-            }
-
-            // 3. 切换视图内容
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            
-            // 如果切换到首页，延迟一点重新渲染图表动画
-            if(viewId === 'dashboard') {
-                initCharts();
-            }
-        }
-
-        // Chart.js 初始化函数
-        let chart1Instance = null;
-        let chart2Instance = null;
-
-        function initCharts() {
-            const ctx1 = document.getElementById('chart1').getContext('2d');
-            const ctx2 = document.getElementById('chart2').getContext('2d');
-
-            // 销毁旧图表防止重叠
-            if(chart1Instance) chart1Instance.destroy();
-            if(chart2Instance) chart2Instance.destroy();
-
-            // 渐变填充
-            const gradient1 = ctx1.createLinearGradient(0, 0, 0, 100);
-            gradient1.addColorStop(0, 'rgba(249, 115, 22, 0.4)'); // brand-500 带透明
-            gradient1.addColorStop(1, 'rgba(249, 115, 22, 0)');
-
-            const gradient2 = ctx2.createLinearGradient(0, 0, 0, 100);
-            gradient2.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
-            gradient2.addColorStop(1, 'rgba(249, 115, 22, 0)');
-
-            const commonOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: true } },
-                scales: {
-                    x: { display: true, grid: { display: false }, border: {display: false}, ticks: {color: '#9ca3af', font: {size: 10}} },
-                    y: { display: false, min: 0 }
-                },
-                elements: {
-                    point: { radius: 0, hitRadius: 10, hoverRadius: 4, backgroundColor: '#f97316' }
-                },
-                layout: { padding: {left: 0, right: 0, top: 10, bottom: 0} }
-            };
-
-            // 图表 1
-            chart1Instance = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: ['02/1', '02/2', '02/3', '02/4', '02/5', '02/6', '02/7', '02/8'],
-                    datasets: [{
-                        data: [1200, 2100, 1500, 2300, 1800, 2400, 1900, 2434],
-                        borderColor: '#f97316',
-                        borderWidth: 2,
-                        tension: 0.4, // 平滑曲线
-                        fill: true,
-                        backgroundColor: gradient1,
-                        pointBackgroundColor: function(context) {
-                            var index = context.dataIndex;
-                            var count = context.dataset.data.length;
-                            return index === count - 1 ? '#f97316' : 'transparent';
-                        },
-                        pointRadius: function(context) {
-                            var index = context.dataIndex;
-                            var count = context.dataset.data.length;
-                            return index === count - 1 ? 4 : 0;
-                        }
-                    }]
-                },
-                options: commonOptions
-            });
-
-            // 图表 2
-            chart2Instance = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: ['02/1', '02/2', '02/3', '02/4', '02/5', '02/6', '02/7', '02/8'],
-                    datasets: [{
-                        data: [8000, 11000, 9000, 12000, 10500, 13000, 12500, 13549],
-                        borderColor: '#f97316',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: gradient2,
-                        pointBackgroundColor: function(context) {
-                            var index = context.dataIndex;
-                            var count = context.dataset.data.length;
-                            return index === count - 1 ? '#f97316' : 'transparent';
-                        },
-                        pointRadius: function(context) {
-                            var index = context.dataIndex;
-                            var count = context.dataset.data.length;
-                            return index === count - 1 ? 4 : 0;
-                        }
-                    }]
-                },
-                options: commonOptions
-            });
-        }
-
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            initCharts();
-        });
+        lucide.createIcons();
     </script>
 </body>
 </html>
